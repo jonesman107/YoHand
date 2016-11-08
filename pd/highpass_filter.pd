@@ -1,0 +1,17 @@
+#N canvas 110 377 450 300 10;
+#X obj 129 36 inlet~;
+#X obj 129 163 outlet~;
+#X obj 129 95 hip~;
+#X obj 286 109 inlet;
+#X obj 286 142 switch~;
+#X obj 195 58 inlet;
+#X obj 83 87 env~;
+#X obj 84 150 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 83 116 - 100;
+#X connect 0 0 2 0;
+#X connect 0 0 6 0;
+#X connect 2 0 1 0;
+#X connect 3 0 4 0;
+#X connect 5 0 2 1;
+#X connect 6 0 8 0;
+#X connect 8 0 7 0;

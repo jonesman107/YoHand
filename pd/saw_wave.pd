@@ -1,0 +1,24 @@
+#N canvas 755 201 581 469 10;
+#X obj -20 -1127 outlet~;
+#X obj 136 -1436 inlet;
+#X obj 136 -1403 switch~;
+#X obj 57 -1367 env~;
+#X obj 57 -1342 - 100;
+#X obj -23 -1465 inlet;
+#X obj -23 -1406 phasor~;
+#X obj 58 -1313 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 60 -1433 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj -23 -1440 line~;
+#X obj -22 -1325 *~ 2;
+#X obj -21 -1268 -~ 1;
+#X connect 1 0 2 0;
+#X connect 3 0 4 0;
+#X connect 4 0 7 0;
+#X connect 5 0 8 0;
+#X connect 5 0 9 0;
+#X connect 6 0 3 0;
+#X connect 6 0 10 0;
+#X connect 9 0 6 0;
+#X connect 10 0 11 0;
+#X connect 11 0 0 0;

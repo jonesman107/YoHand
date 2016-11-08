@@ -1,0 +1,361 @@
+#N canvas 90 23 1280 708 10;
+#X obj 12 334 dac~;
+#X obj 11 106 *~;
+#X obj 381 302 vsl 15 50 10 1010 1 0 empty bs_r R 0 -9 0 10 -262144
+-1 -1 3181 1;
+#X obj 303 299 vsl 15 50 10 1010 1 0 empty bs_d D 0 -9 0 10 -262144
+-1 -1 4889 1;
+#X obj 266 303 vsl 15 50 10 1010 1 0 empty bs_a A 0 -9 0 10 -262144
+-1 -1 736 1;
+#X obj 343 301 vsl 15 50 0.01 1 1 0 empty bs_s S 0 -9 0 10 -262144
+-1 -1 4900 1;
+#X obj 266 399 s a;
+#X obj 303 399 s d;
+#X obj 343 397 s s;
+#X obj 381 399 s r;
+#X obj 266 360 - 10;
+#X obj 303 359 - 10;
+#X obj 381 359 - 10;
+#X obj 108 384 metro 50;
+#X obj 132 366 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 107 365 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#N canvas 0 50 450 278 (subpatch) 0;
+#X array wave 100 float 3;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0;
+#X coords 0 1 99 -1 200 140 1;
+#X restore 482 372 graph;
+#X obj 75 333 tabwrite~ wave;
+#X floatatom 754 522 5 0 0 0 - - -;
+#X obj 754 499 - 0.05;
+#X obj 754 440 vsl 15 50 0.05 5.05 1 0 empty bs_lfo_rate empty 0 -9
+0 10 -262144 -1 -1 0 1;
+#X text 770 434 fastest (5);
+#X text 770 477 slowest (0);
+#X obj 65 82 LFO;
+#X obj 730 91 vradio 15 1 0 4 filter_type bs_filter_type empty 0 -8
+0 10 -262144 -1 -1 0;
+#X text 749 103 (1) High-pass;
+#X text 750 121 (2) Band-pass;
+#X text 749 139 (3) Low-pass;
+#X text 750 86 (0) No filter;
+#X obj 10 144 filters;
+#X obj 319 85 vradio 15 1 0 2 wave_shape bs_wave_shape empty 0 -8 0
+10 -262144 -1 -1 0;
+#X text 341 84 (0) saw;
+#X text 341 101 (1) sin;
+#X floatatom 975 138 5 0 0 0 - - -;
+#X obj 974 181 s q;
+#X obj 1010 182 - 1;
+#X text 317 267 ADSR;
+#X obj 1079 67 tgl 15 0 voice_filt_on bs_voice_filt_on empty 17 7 0
+10 -262144 -1 -1 0 1;
+#X obj 44 417 env~;
+#X obj 45 459 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 44 437 - 100;
+#X text 757 272 Reverb;
+#X obj 820 271 tgl 15 0 reverb_on bs_reverb_on empty 17 7 0 10 -262144
+-1 -1 0 1;
+#X text 842 269 On/off;
+#X obj 10 182 effects;
+#X obj 760 328 hsl 50 15 0 100 0 0 liveness bs_liveness empty -2 -8
+0 10 -262144 -1 -1 0 1;
+#X floatatom 721 347 5 0 0 0 - - -;
+#X floatatom 719 324 5 0 0 0 - - -;
+#X floatatom 721 368 5 0 0 0 - - -;
+#X text 1099 67 On/off;
+#X floatatom 974 160 5 0 0 0 - - -;
+#X floatatom 319 121 5 0 0 0 - - -;
+#X obj 13 231 tb_compressor~;
+#X obj 762 375 hsl 50 15 0 5000 0 0 crossover bs_crossover empty -2
+-8 0 10 -262144 -1 -1 0 1;
+#X text 818 326 Liveness (0 - 100%);
+#X text 817 351 Damping (0 - 100%);
+#X obj 761 351 hsl 50 15 0 100 0 0 damping bs_damping empty -2 -8 0
+10 -262144 -1 -1 0 1;
+#X text 819 374 Crossover (0 - 5000 hz);
+#X text 1003 269 Wah-wah;
+#X obj 1067 270 tgl 15 0 wahwah_on bs_wahwah_on empty 17 7 0 10 -262144
+-1 -1 0 1;
+#X text 1089 268 On/off;
+#X obj 1004 374 hsl 50 15 0 20 0 0 wahwah_q bs_wahwah_q empty -2 -8
+0 10 -262144 -1 -1 0 1;
+#X text 1068 325 Max freq (700 - 6000 hz);
+#X obj 1004 327 hsl 50 15 700 6000 0 0 wahwah_max_freq bs_wahwah_max_freq
+empty -2 -8 0 10 -262144 -1 -1 0 1;
+#X text 1069 348 Min freq (0 - 700 hz);
+#X obj 1005 300 hsl 50 15 0 10 0 0 wahwah_lfo_freq bs_wahwah_lfo_freq
+empty -2 -8 0 10 -262144 -1 -1 0 1;
+#X text 1068 302 LFO frequency (0 - 10 hz);
+#X obj 1004 348 hsl 50 15 0 700 0 0 wahwah_min_freq bs_wahwah_min_freq
+empty -2 -8 0 10 -262144 -1 -1 0 1;
+#X text 1069 370 Q factor (0 - 20 hz);
+#X obj 760 305 hsl 50 15 0 2 0 0 rev_wet_dry bs_rev_wet_dry empty -2
+-8 0 10 -262144 -1 -1 0 1;
+#X floatatom 720 305 5 0 0 0 - - -;
+#X text 817 305 Dry/wet (all dry - all wet);
+#N canvas 198 330 763 567 armement 0;
+#X obj 198 507 soundfiler;
+#X obj 244 339 until;
+#X obj 245 413 textfile;
+#X msg 311 389 rewind;
+#X msg 244 362 bang;
+#X obj 244 277 pipe 1;
+#X msg 280 360 read notemap.txt cr;
+#X obj 198 448 unpack s f;
+#X obj 198 468 pack s s f;
+#X obj 181 246 symbol;
+#X obj 244 256 t s b;
+#X obj 244 295 t b b;
+#X msg 198 488 read -resize ./\$2/\$1 tab_\$3;
+#X msg 244 319 35;
+#X obj 214 18 inlet;
+#X symbolatom 105 107 10 0 0 0 - - -;
+#X obj 214 49 sel 0 1 2 3 4 5 6 7 8 9;
+#X msg 271 200 Cello;
+#X msg 207 86 MKIIFlute;
+#X msg 295 243 CombinedChoir;
+#X msg 248 155 MKIIViolin;
+#X msg 283 222 StringSection;
+#X msg 330 124 Woodwind;
+#X msg 345 151 GC3Brass;
+#X msg 220 109 M300A;
+#X msg 232 133 M300B;
+#X msg 260 178 MKIIBrass;
+#X text 430 44 Here we load the choosen instrument into;
+#X text 431 57 the bank of tables.;
+#X text 431 73 The sound samples for each note have to;
+#X text 430 87 be in folders located in the same folder;
+#X text 431 102 as yellotron.pd.;
+#X text 431 117 The samples (named C \, C# \, B...) are mapped;
+#X text 431 130 to midi notes (60 \, 61 \, 62...) as per the information
+;
+#X text 431 144 contained in notemap.txt .;
+#X connect 1 0 4 0;
+#X connect 2 0 7 0;
+#X connect 3 0 2 0;
+#X connect 4 0 2 0;
+#X connect 5 0 11 0;
+#X connect 6 0 2 0;
+#X connect 7 0 8 0;
+#X connect 7 1 8 2;
+#X connect 8 0 12 0;
+#X connect 9 0 10 0;
+#X connect 9 0 15 0;
+#X connect 9 0 8 1;
+#X connect 10 0 5 0;
+#X connect 10 1 6 0;
+#X connect 11 0 13 0;
+#X connect 11 1 3 0;
+#X connect 12 0 0 0;
+#X connect 13 0 1 0;
+#X connect 14 0 16 0;
+#X connect 16 0 18 0;
+#X connect 16 1 24 0;
+#X connect 16 2 25 0;
+#X connect 16 3 20 0;
+#X connect 16 4 26 0;
+#X connect 16 5 17 0;
+#X connect 16 6 21 0;
+#X connect 16 7 19 0;
+#X connect 16 8 22 0;
+#X connect 16 9 23 0;
+#X connect 17 0 9 0;
+#X connect 18 0 9 0;
+#X connect 19 0 9 0;
+#X connect 20 0 9 0;
+#X connect 21 0 9 0;
+#X connect 22 0 9 0;
+#X connect 23 0 9 0;
+#X connect 24 0 9 0;
+#X connect 25 0 9 0;
+#X connect 26 0 9 0;
+#X coords 0 -1 1 1 70 30 2 100 100;
+#X restore 510 241 pd armement;
+#X obj 988 525 hradio 15 1 0 2 empty empty empty 0 -8 0 10 -262144
+-1 -1 0;
+#X obj 988 545 * 12;
+#X obj 988 567 + 48;
+#X obj 988 587 s octave;
+#X obj 510 86 vradio 15 1 0 10 empty bs_instru_type empty 0 -8 0 10
+-262144 -1 -1 0;
+#X obj 990 640 hsl 128 15 0 0.125 0 0 empty empty empty -2 -8 0 10
+-262144 -1 -1 6350 1;
+#X obj 987 685 s pitch;
+#X obj 987 660 - 0.0625;
+#X obj 931 584 bendin;
+#X obj 931 604 / 16383;
+#X obj 932 632 / 8;
+#X obj 987 619 r set-pitch;
+#X floatatom 1045 677 5 0 0 0 - - -;
+#X text 530 84 (0) MkII Flute;
+#X text 530 98 (1) M300A;
+#X text 530 113 (2) M300B;
+#X text 530 128 (3) MkII Violin;
+#X text 530 144 (4) MkII Brass;
+#X text 530 173 (6) String Section;
+#X text 530 189 (7) Combined Choir;
+#X text 530 159 (5) Cello;
+#X text 530 204 (8) Woodwind;
+#X text 530 219 (9) GC3 Brass;
+#N canvas 417 264 450 403 armoire 0;
+#X obj 20 36 table tab_43;
+#X obj 20 55 table tab_44;
+#X obj 20 74 table tab_45;
+#X obj 20 93 table tab_46;
+#X obj 20 112 table tab_47;
+#X obj 20 131 table tab_48;
+#X obj 20 150 table tab_49;
+#X obj 20 169 table tab_50;
+#X obj 20 188 table tab_51;
+#X obj 20 207 table tab_52;
+#X obj 20 226 table tab_53;
+#X obj 20 245 table tab_54;
+#X obj 20 264 table tab_55;
+#X obj 105 36 table tab_56;
+#X obj 105 55 table tab_57;
+#X obj 105 74 table tab_58;
+#X obj 105 93 table tab_59;
+#X obj 105 112 table tab_60;
+#X obj 105 131 table tab_61;
+#X obj 105 150 table tab_62;
+#X obj 105 169 table tab_63;
+#X obj 105 188 table tab_64;
+#X obj 105 207 table tab_65;
+#X obj 105 226 table tab_66;
+#X obj 105 245 table tab_67;
+#X obj 105 264 table tab_68;
+#X obj 190 36 table tab_69;
+#X obj 190 55 table tab_70;
+#X obj 190 74 table tab_71;
+#X obj 190 93 table tab_72;
+#X obj 190 112 table tab_73;
+#X obj 190 131 table tab_74;
+#X obj 190 150 table tab_75;
+#X obj 190 169 table tab_76;
+#X obj 190 188 table tab_77;
+#X text 145 313 Pierre Massat \, Guitar Extended \, 2014;
+#X restore 91 610 pd armoire;
+#X floatatom 266 382 5 0 0 0 - - -;
+#X floatatom 303 381 5 0 0 0 - - -;
+#X floatatom 343 379 5 0 0 0 - - -;
+#X floatatom 381 381 5 0 0 0 - - -;
+#X obj 754 542 s lfo_rate;
+#X text 505 66 Type of instrument;
+#X floatatom 679 137 5 0 0 0 - - -;
+#X text 464 12 SOUND;
+#X text 914 9 FILTERS;
+#X text 930 233 EFFECTS;
+#X obj 718 161 hsl 50 15 0 127 0 0 filter_cutoff bs_filter_cutoff empty
+-2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 679 161 5 0 0 0 - - cutoff_freq;
+#X obj 718 185 hsl 50 15 0 127 0 0 band_width bs_band_width empty -2
+-8 0 10 -262144 -1 -1 0 1;
+#X text 777 161 Cutoff/center freq (0 - 127);
+#X floatatom 680 184 5 0 0 0 - - cutoff_freq;
+#X text 777 184 Resonance/band width;
+#X text 734 68 Type of filter;
+#X text 1009 68 Band pass;
+#X obj 1014 94 hsl 50 15 20 20000 1 0 start bs_start empty -2 -8 0
+10 -262144 -1 -1 0 1;
+#X floatatom 975 93 5 0 0 0 - - -;
+#X text 1074 95 Start freq (20 - 20000 hz);
+#X obj 1013 161 hsl 50 15 1 256 1 0 empty bs_q empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X text 1073 161 Resonance;
+#X obj 1014 116 hsl 50 15 20 20000 1 0 end bs_end empty -2 -8 0 10
+-262144 -1 -1 0 1;
+#X text 1073 117 End freq (20 - 20000 hz);
+#X floatatom 975 115 5 0 0 0 - - -;
+#X obj 1014 138 hsl 50 15 100 10000 1 0 time bs_time empty -2 -8 0
+10 -262144 -1 -1 0 1;
+#X text 1072 138 Time (100 - 10000 ms);
+#X text 702 42 Filters for *combined* voices:;
+#X text 979 41 Filter for *individual* voices:;
+#X obj 1118 440 loadbang;
+#X text 1097 424 Default settings;
+#X text 258 425 A \, D \, R (time: 0 - 1000 ms) \; S (volume: 0 - 1)
+;
+#X text 765 414 LFO rate;
+#X obj 123 52 mellotron_voices;
+#X obj 12 46 wave_voices;
+#X obj 189 522 tb_compressorUI;
+#X text 275 37 Custom wave - midi channel 1;
+#X text 314 64 Shape of wave;
+#X text 491 37 Mellotron - midi channel 2;
+#X obj 12 13 notein 1;
+#X obj 123 12 notein 2;
+#X obj 343 357 - 0.01;
+#X msg 1118 462 \; pd dsp 1 \; bs_wave_shape 0 \; bs_instru_type 0
+\; set-pitch 0.0625 \; bs_wahwah_on 0 \; bs_reverb_on 0 \; bs_band_width
+0 \; bs_filter_cutoff 0 \; bs_filter_type 0 \; bs_voice_filt_on 0 \;
+bs_lfo_rate 0.05 \; bs_a 20 \; bs_d 1000 \; bs_s 1 \; bs_r 200;
+#X obj 158 222 *~ 0.25;
+#X connect 1 0 29 0;
+#X connect 2 0 12 0;
+#X connect 3 0 11 0;
+#X connect 4 0 10 0;
+#X connect 5 0 139 0;
+#X connect 10 0 97 0;
+#X connect 11 0 98 0;
+#X connect 12 0 100 0;
+#X connect 13 0 17 0;
+#X connect 14 0 13 0;
+#X connect 15 0 17 0;
+#X connect 18 0 101 0;
+#X connect 19 0 18 0;
+#X connect 20 0 19 0;
+#X connect 23 0 1 1;
+#X connect 24 0 103 0;
+#X connect 29 0 44 0;
+#X connect 30 0 51 0;
+#X connect 35 0 50 0;
+#X connect 38 0 40 0;
+#X connect 40 0 39 0;
+#X connect 44 0 52 0;
+#X connect 45 0 47 0;
+#X connect 50 0 34 0;
+#X connect 52 0 17 0;
+#X connect 52 0 38 0;
+#X connect 52 0 0 0;
+#X connect 52 0 0 1;
+#X connect 52 1 133 0;
+#X connect 53 0 48 0;
+#X connect 56 0 46 0;
+#X connect 69 0 70 0;
+#X connect 73 0 74 0;
+#X connect 74 0 75 0;
+#X connect 75 0 76 0;
+#X connect 77 0 72 0;
+#X connect 78 0 80 0;
+#X connect 80 0 79 0;
+#X connect 80 0 85 0;
+#X connect 81 0 82 0;
+#X connect 82 0 83 0;
+#X connect 83 0 78 0;
+#X connect 84 0 78 0;
+#X connect 97 0 6 0;
+#X connect 98 0 7 0;
+#X connect 99 0 8 0;
+#X connect 100 0 9 0;
+#X connect 107 0 108 0;
+#X connect 109 0 111 0;
+#X connect 115 0 116 0;
+#X connect 118 0 35 0;
+#X connect 120 0 122 0;
+#X connect 123 0 33 0;
+#X connect 127 0 140 0;
+#X connect 131 0 141 0;
+#X connect 132 0 1 0;
+#X connect 133 0 52 1;
+#X connect 137 0 132 0;
+#X connect 137 1 132 1;
+#X connect 138 0 131 0;
+#X connect 138 1 131 1;
+#X connect 139 0 99 0;
+#X connect 141 0 0 0;
+#X connect 141 0 0 1;
