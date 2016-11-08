@@ -20,20 +20,6 @@ struct BeatState
   int type;
 };
 
-class Rhythm
-{
- private:
-  BeatState accents[MAX_SUBDIV];
- public:
-  Rhythm();
-  void incrAccent(MetronomeState state);
-  void clearAccents();
-  bool accentAt(MetronomeState state);
-  int numAccents();
-  void getAccents(bool *arr);
-
-};
-
 class InstrumentModule : public Module
 {
  public:
@@ -63,13 +49,10 @@ class InstrumentModule : public Module
   int currentInstrument;
   std::vector<int> offQueue;
 
-  // Rhythm params.
-  Rhythm rhythm;
-
   void checkInstrumentChange();
   bool checkStop();
   void stopAllNotes();
-  void updateRhythm(MetronomeState state);
+//  void updateRhythm(MetronomeState state);
   void stopTriadIfNeeded(int *triad);
   void updateCurrentSubdivision();
   void sendNote(int channel, int note, int velocity, int *updateNote);

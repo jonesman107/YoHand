@@ -13,93 +13,93 @@
 #define NOTE_OFF 0
 static Harmony harmony;
 
-Rhythm::Rhythm()
-{
-  clearAccents();
-}
+//Rhythm::Rhythm()
+//{
+//  clearAccents();
+//}
 
-void Rhythm::incrAccent(MetronomeState state)
-{
-  int off = state.sixteenthTripletNum;
-  if (!accents[off].beat ||
-      accents[off].measureChanged == state.measuresElapsed)
-    return;
+//void Rhythm::incrAccent(MetronomeState state)
+//{
+//  int off = state.sixteenthTripletNum;
+//  if (!accents[off].beat ||
+//      accents[off].measureChanged == state.measuresElapsed)
+//    return;
 
-  if (accents[off].type == BEAT_QUARTER) {
-    int change = off + EIGHTH_SUBDIV;
-    accents[off].measureChanged = state.measuresElapsed;
-    accents[off].type = BEAT_EIGHTH;
+//  if (accents[off].type == BEAT_QUARTER) {
+//    int change = off + EIGHTH_SUBDIV;
+//    accents[off].measureChanged = state.measuresElapsed;
+//    accents[off].type = BEAT_EIGHTH;
     
-    accents[change].beat = true;
-    accents[change].measureChanged = state.measuresElapsed;
-    accents[change].type = BEAT_EIGHTH;
-  } else if (accents[off].type == BEAT_EIGHTH) {
-    int change = off + SIXTEENTH_SUBDIV;
-    accents[off].measureChanged = state.measuresElapsed;
-    accents[off].type = BEAT_SIXTEENTH;
+//    accents[change].beat = true;
+//    accents[change].measureChanged = state.measuresElapsed;
+//    accents[change].type = BEAT_EIGHTH;
+//  } else if (accents[off].type == BEAT_EIGHTH) {
+//    int change = off + SIXTEENTH_SUBDIV;
+//    accents[off].measureChanged = state.measuresElapsed;
+//    accents[off].type = BEAT_SIXTEENTH;
     
-    accents[change].beat = true;
-    accents[change].measureChanged = state.measuresElapsed;
-    accents[change].type = BEAT_SIXTEENTH;
-  } else if (accents[off].type == BEAT_SIXTEENTH) {
-    accents[off].measureChanged = state.measuresElapsed;
-    accents[off].type = BEAT_SIXTRIPLE;
-    accents[off+1].beat = true;
-    accents[off+1].measureChanged = state.measuresElapsed;
-    accents[off+1].type = BEAT_SIXTRIPLE;
-    accents[off+2].beat = true;
-    accents[off+2].measureChanged = state.measuresElapsed;
-    accents[off+2].type = BEAT_SIXTRIPLE;
-  }
+//    accents[change].beat = true;
+//    accents[change].measureChanged = state.measuresElapsed;
+//    accents[change].type = BEAT_SIXTEENTH;
+//  } else if (accents[off].type == BEAT_SIXTEENTH) {
+//    accents[off].measureChanged = state.measuresElapsed;
+//    accents[off].type = BEAT_SIXTRIPLE;
+//    accents[off+1].beat = true;
+//    accents[off+1].measureChanged = state.measuresElapsed;
+//    accents[off+1].type = BEAT_SIXTRIPLE;
+//    accents[off+2].beat = true;
+//    accents[off+2].measureChanged = state.measuresElapsed;
+//    accents[off+2].type = BEAT_SIXTRIPLE;
+//  }
   
-}
+//}
 
-void Rhythm::clearAccents()
-{
-  for (int i = 0; i < MAX_SUBDIV; i++) {
-    if (i % QUARTER_SUBDIV)
-      accents[i].beat = false;
-    else {
-      accents[i].beat = true;
-      accents[i].measureChanged = -1;
-      accents[i].type = BEAT_QUARTER;
-    }
-  }
-}
+//void Rhythm::clearAccents()
+//{
+//  for (int i = 0; i < MAX_SUBDIV; i++) {
+//    if (i % QUARTER_SUBDIV)
+//      accents[i].beat = false;
+//    else {
+//      accents[i].beat = true;
+//      accents[i].measureChanged = -1;
+//      accents[i].type = BEAT_QUARTER;
+//    }
+//  }
+//}
 
-bool Rhythm::accentAt(MetronomeState state)
-{
-  return accents[state.sixteenthTripletNum].beat;
-}
+//bool Rhythm::accentAt(MetronomeState state)
+//{
+//  return accents[state.sixteenthTripletNum].beat;
+//}
 
-int Rhythm::numAccents()
-{
-  return MAX_SUBDIV;
-}
+//int Rhythm::numAccents()
+//{
+//  return MAX_SUBDIV;
+//}
 
-void Rhythm::getAccents(bool *arr)
-{
-  for (int i = 0; i < MAX_SUBDIV; i++) {
-    arr[i] = accents[i].beat;
-  }
-}
+//void Rhythm::getAccents(bool *arr)
+//{
+//  for (int i = 0; i < MAX_SUBDIV; i++) {
+//    arr[i] = accents[i].beat;
+//  }
+//}
 
-void InstrumentModule::updateRhythm(MetronomeState state)
-{
-    HandState h = hand();
-    // Calculate rhythm.
-    float forward_tilt = h.nz / h.ny;
-    if (forward_tilt > 1) {
-      rhythm.incrAccent(state);
-    } else if (forward_tilt < -1) {
-      rhythm.clearAccents();
-    }
-    /*
-    if (state.sixteenthTripletNum % (4 * 3) == 0) cout << endl;
-    if (rhythm.accentAt(state)) cout << "." << flush;
-    else cout << " " << flush;
-    */
-}
+//void InstrumentModule::updateRhythm(MetronomeState state)
+//{
+//    HandState h = hand();
+//    // Calculate rhythm.
+//    float forward_tilt = h.nz / h.ny;
+//    if (forward_tilt > 1) {
+//      rhythm.incrAccent(state);
+//    } else if (forward_tilt < -1) {
+//      rhythm.clearAccents();
+//    }
+//    /*
+//    if (state.sixteenthTripletNum % (4 * 3) == 0) cout << endl;
+//    if (rhythm.accentAt(state)) cout << "." << flush;
+//    else cout << " " << flush;
+//    */
+//}
 
 InstrumentModule::InstrumentModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel) :
   Module(mux, pd, channel), gfx(gfx)
@@ -134,13 +134,13 @@ void InstrumentModule::update(MetronomeState state)
   updateNotesIfNeeded(state);
   sendChordsIfNeeded(state);
   sendMelody(state);
-  updateRhythm(state);
+//  updateRhythm(state);
 }
 
 void InstrumentModule::sendMelody(MetronomeState state) {
   HandState h = hand();
   
-  if ((state.sixteenth && !state.eighth && rhythm.accentAt(state)) ||
+  if (//(state.sixteenth && !state.eighth && rhythm.accentAt(state)) ||
       (h.splay < 0.05 && state.quarter) ||
       (h.splay >= 0.05 && h.splay < 0.35 && state.eighth) ||
       (h.splay >= 0.35 && h.splay < 0.75 && state.eighthTriplet) ||
@@ -162,19 +162,19 @@ void InstrumentModule::sendMelody(MetronomeState state) {
     }
   }
 
-  vector<bool> out_accents;
-  bool accents[rhythm.numAccents()];
-  rhythm.getAccents(accents);
-  for (int i = 0; i < rhythm.numAccents(); i++) {
-    bool accent = accents[i];
-    if (i == 0 ||
-    (h.splay >= 0.05 && (i % EIGHTH_SUBDIV == 0)) ||
-    (h.splay >= 0.35 && (i % EIGHTH_TRIPLET_SUBDIV == 0)) ||
-	(h.splay >= 0.75 && (i % SIXTEENTH_SUBDIV == 0)))
-      accent = true;
-    out_accents.push_back(accent);
-  }
-  gfx->sendAccents(out_accents);
+//  vector<bool> out_accents;
+//  bool accents[rhythm.numAccents()];
+//  rhythm.getAccents(accents);
+//  for (int i = 0; i < rhythm.numAccents(); i++) {
+//    bool accent = accents[i];
+//    if (i == 0 ||
+//    (h.splay >= 0.05 && (i % EIGHTH_SUBDIV == 0)) ||
+//    (h.splay >= 0.35 && (i % EIGHTH_TRIPLET_SUBDIV == 0)) ||
+//	(h.splay >= 0.75 && (i % SIXTEENTH_SUBDIV == 0)))
+//      accent = true;
+//    out_accents.push_back(accent);
+//  }
+//  gfx->sendAccents(out_accents);
 }
 
 void InstrumentModule::updateNotesIfNeeded(MetronomeState state) {
