@@ -1,64 +1,48 @@
-#ifndef INSTRUMENT_MODULE_H_
-#define INSTRUMENT_MODULE_H_
+#ifndef INSTRUMENTMODULE_H
+#define INSTRUMENTMODULE_H
+
 
 #include "module.h"
 #include "graphics.h"
 #include "metronome.h"
 
-//// miliseconds in one beat
-//static int BEAT_PERIOD = 200;
-
-#define BEAT_QUARTER   0
-#define BEAT_EIGHTH    1
-#define BEAT_SIXTEENTH 2
-#define BEAT_SIXTRIPLE 2
-
-struct BeatState
-{
-  bool beat;
-  int measureChanged;
-  int type;
-};
-
 class InstrumentModule : public Module
 {
- public:
-  InstrumentModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel);
-  void update(MetronomeState state);
-  void changeInstrument(int instrumentNumber);
-  void sendEnvelope(int attack, int decay, float sustain, int release);
-  void sendCompressor(int instrumentNumber);
-  void incrementKey();
-  void decrementKey();
-
- private:
-  Graphics *gfx;
-  int changeKey;
-  int prevRoot;
+public:
+    InstrumentModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel);
+    bool update(MetronomeState state);
+    void changeInstrument(int instrumentNumber);
+    void sendEnvelope(int attack, int decay, float sustain, int release);
+    void sendCompressor(int instrumentNumber);
+    void incrementKey();
+    void decrementKey();
 
 
-  int curSubdiv;
-  int sequence[16];
-  int curPos;
-  int melodyNote;
+protected:
+    Graphics *gfx;
+    int prevRoot;
+    int prevTriad[3];
+    int curSubdiv;
+    int curPos;
+    int chordChannel;
 
-  int prevTriad[3];
-  int chordChange[4];
-  int chordChannel;
-  int prevInstrument;
-  int currentInstrument;
-  std::vector<int> offQueue;
+    void sendNote(int channel, int note, int velocity, int *updateNote);
+    void stopAllNotes();
 
-  void checkInstrumentChange();
-  bool checkStop();
-  void stopAllNotes();
-//  void updateRhythm(MetronomeState state);
-  void stopTriadIfNeeded(int *triad);
-  void updateCurrentSubdivision();
-  void sendNote(int channel, int note, int velocity, int *updateNote);
-  void sendMelody(MetronomeState state);
-  void updateNotesIfNeeded(MetronomeState state);
-  void sendChordsIfNeeded(MetronomeState state);
+private:
+    int sequence[16];
+    int melodyNote;
+    int chordChange[4];
+    int changeKey;
+    int prevInstrument;
+    int currentInstrument;
+
+    void checkInstrumentChange();
+    bool checkStop();
+    void updateCurrentSubdivision();
+    void sendMelody(MetronomeState state);
+    void updateNotesIfNeeded(MetronomeState state);
+
 };
 
-#endif
+#endif // INSTRUMENTMODULE_H

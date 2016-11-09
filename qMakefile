@@ -59,8 +59,10 @@ SOURCES       = glwidget.cpp \
 		audiowidget.cpp \
 		leapmux.cpp \
 		musictheory.cpp \
-		instrumentmodule.cpp \
-		effectsmodule.cpp generated_files/moc_glwidget.cpp \
+		effectsmodule.cpp \
+		mellotronmodule.cpp \
+		synthmodule.cpp \
+		instrumentmodule.cpp generated_files/moc_glwidget.cpp \
 		generated_files/moc_widget.cpp \
 		generated_files/moc_window.cpp \
 		generated_files/moc_audiowidget.cpp
@@ -75,8 +77,10 @@ OBJECTS       = generated_files/glwidget.o \
 		generated_files/audiowidget.o \
 		generated_files/leapmux.o \
 		generated_files/musictheory.o \
-		generated_files/instrumentmodule.o \
 		generated_files/effectsmodule.o \
+		generated_files/mellotronmodule.o \
+		generated_files/synthmodule.o \
+		generated_files/instrumentmodule.o \
 		generated_files/moc_glwidget.o \
 		generated_files/moc_widget.o \
 		generated_files/moc_window.o \
@@ -239,9 +243,11 @@ DIST          = ../5.7/clang_64/mkspecs/features/spec_pre.prf \
 		leapmux.h \
 		musictheory.h \
 		module.h \
-		instrumentmodule.h \
 		effectsmodule.h \
-		metronome.h glwidget.cpp \
+		metronome.h \
+		mellotronmodule.h \
+		synthmodule.h \
+		instrumentmodule.h glwidget.cpp \
 		graphics.cpp \
 		main.cpp \
 		widget.cpp \
@@ -252,8 +258,10 @@ DIST          = ../5.7/clang_64/mkspecs/features/spec_pre.prf \
 		audiowidget.cpp \
 		leapmux.cpp \
 		musictheory.cpp \
-		instrumentmodule.cpp \
-		effectsmodule.cpp
+		effectsmodule.cpp \
+		mellotronmodule.cpp \
+		synthmodule.cpp \
+		instrumentmodule.cpp
 QMAKE_TARGET  = YoHand
 DESTDIR       = 
 TARGET        = YoHand
@@ -582,8 +590,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.h graphics.h widget.h window.h leapcontroller.h leappd.h rtaudio.h audiowidget.h leapmux.h musictheory.h module.h instrumentmodule.h effectsmodule.h metronome.h $(DISTDIR)/
-	$(COPY_FILE) --parents glwidget.cpp graphics.cpp main.cpp widget.cpp window.cpp leapcontroller.cpp leappd.cpp rtaudio.cpp audiowidget.cpp leapmux.cpp musictheory.cpp instrumentmodule.cpp effectsmodule.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.h graphics.h widget.h window.h leapcontroller.h leappd.h rtaudio.h audiowidget.h leapmux.h musictheory.h module.h effectsmodule.h metronome.h mellotronmodule.h synthmodule.h instrumentmodule.h $(DISTDIR)/
+	$(COPY_FILE) --parents glwidget.cpp graphics.cpp main.cpp widget.cpp window.cpp leapcontroller.cpp leappd.cpp rtaudio.cpp audiowidget.cpp leapmux.cpp musictheory.cpp effectsmodule.cpp mellotronmodule.cpp synthmodule.cpp instrumentmodule.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -850,6 +858,7 @@ generated_files/audiowidget.o: audiowidget.cpp audiowidget.h \
 		libpd/cpp/PdMidiReceiver.hpp \
 		rtaudio.h \
 		module.h \
+		mellotronmodule.h \
 		instrumentmodule.h \
 		effectsmodule.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/audiowidget.o audiowidget.cpp
@@ -862,6 +871,69 @@ generated_files/leapmux.o: leapmux.cpp leapcontroller.h \
 
 generated_files/musictheory.o: musictheory.cpp musictheory.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/musictheory.o musictheory.cpp
+
+generated_files/effectsmodule.o: effectsmodule.cpp effectsmodule.h \
+		module.h \
+		leapmux.h \
+		leapcontroller.h \
+		leap/include/Leap.h \
+		leap/include/LeapMath.h \
+		leappd.h \
+		libpd/cpp/PdBase.hpp \
+		libpd/cpp/PdReceiver.hpp \
+		libpd/cpp/PdTypes.hpp \
+		libpd/cpp/PdMidiReceiver.hpp \
+		rtaudio.h \
+		metronome.h \
+		../5.7/clang_64/lib/QtCore.framework/Headers/QTimer \
+		../5.7/clang_64/lib/QtCore.framework/Headers/qtimer.h \
+		graphics.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QBrush \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qbrush.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QFont \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qfont.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QPen \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qpen.h \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		musictheory.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/effectsmodule.o effectsmodule.cpp
+
+generated_files/mellotronmodule.o: mellotronmodule.cpp mellotronmodule.h \
+		instrumentmodule.h \
+		module.h \
+		leapmux.h \
+		leapcontroller.h \
+		leap/include/Leap.h \
+		leap/include/LeapMath.h \
+		leappd.h \
+		libpd/cpp/PdBase.hpp \
+		libpd/cpp/PdReceiver.hpp \
+		libpd/cpp/PdTypes.hpp \
+		libpd/cpp/PdMidiReceiver.hpp \
+		rtaudio.h \
+		metronome.h \
+		../5.7/clang_64/lib/QtCore.framework/Headers/QTimer \
+		../5.7/clang_64/lib/QtCore.framework/Headers/qtimer.h \
+		graphics.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QBrush \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qbrush.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QFont \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qfont.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QPen \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qpen.h \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		musictheory.h \
+		audiowidget.h \
+		../5.7/clang_64/lib/QtCore.framework/Headers/QObject \
+		../5.7/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QKeyEvent \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qevent.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/mellotronmodule.o mellotronmodule.cpp
+
+generated_files/synthmodule.o: synthmodule.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/synthmodule.o synthmodule.cpp
 
 generated_files/instrumentmodule.o: instrumentmodule.cpp instrumentmodule.h \
 		module.h \
@@ -894,33 +966,6 @@ generated_files/instrumentmodule.o: instrumentmodule.cpp instrumentmodule.h \
 		../5.7/clang_64/lib/QtGui.framework/Headers/QKeyEvent \
 		../5.7/clang_64/lib/QtGui.framework/Headers/qevent.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/instrumentmodule.o instrumentmodule.cpp
-
-generated_files/effectsmodule.o: effectsmodule.cpp effectsmodule.h \
-		module.h \
-		leapmux.h \
-		leapcontroller.h \
-		leap/include/Leap.h \
-		leap/include/LeapMath.h \
-		leappd.h \
-		libpd/cpp/PdBase.hpp \
-		libpd/cpp/PdReceiver.hpp \
-		libpd/cpp/PdTypes.hpp \
-		libpd/cpp/PdMidiReceiver.hpp \
-		rtaudio.h \
-		metronome.h \
-		../5.7/clang_64/lib/QtCore.framework/Headers/QTimer \
-		../5.7/clang_64/lib/QtCore.framework/Headers/qtimer.h \
-		graphics.h \
-		../5.7/clang_64/lib/QtGui.framework/Headers/QBrush \
-		../5.7/clang_64/lib/QtGui.framework/Headers/qbrush.h \
-		../5.7/clang_64/lib/QtGui.framework/Headers/QFont \
-		../5.7/clang_64/lib/QtGui.framework/Headers/qfont.h \
-		../5.7/clang_64/lib/QtGui.framework/Headers/QPen \
-		../5.7/clang_64/lib/QtGui.framework/Headers/qpen.h \
-		../5.7/clang_64/lib/QtWidgets.framework/Headers/QWidget \
-		../5.7/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
-		musictheory.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/effectsmodule.o effectsmodule.cpp
 
 generated_files/moc_glwidget.o: generated_files/moc_glwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/moc_glwidget.o generated_files/moc_glwidget.cpp

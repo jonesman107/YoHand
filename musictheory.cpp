@@ -147,28 +147,6 @@ void Harmony::getTriad(int note, bool open, int triad[3], int prev[3]) {
         triad[1] = third = KEYMAP[key][note + 2];
         triad[2] = fifth = KEYMAP[key][note - 3];
     }
-    if (RANGE != 2) {
-        int *ARP = ARPEGGIOS[key][note % 7];
-        int minDist = 99999, chosenIndex = 0;
-        for (int i = 0; i < 8; i++) {
-          double sum = 0;
-          for (int j = 0; j < 3; j++) {
-            int val = ARP[indx[i][j]];
-            combos[i][j] = val;
-            for (int k = 0; k < 3; k++) {
-              int diff = std::abs(val - prev[i]) + std::abs(val - triad[i]);
-              sum += diff;
-            }
-          }
-
-          if (sum < minDist) {
-            minDist = sum;
-          }
-        }
-      triad[0] = combos[chosenIndex][0];
-      triad[1] = combos[chosenIndex][1];
-      triad[2] = combos[chosenIndex][2];
-    }
 }
 
 void Harmony::getAccentNotes(int currentRoot, int triad[3], int noteInSequence, int accentNotes[2]) {

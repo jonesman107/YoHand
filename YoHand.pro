@@ -26,9 +26,11 @@ HEADERS     = glwidget.h \
               leapmux.h \
               musictheory.h \
               module.h \
-              instrumentmodule.h \
               effectsmodule.h \
-              metronome.h
+              metronome.h \
+    mellotronmodule.h \
+    synthmodule.h \
+    instrumentmodule.h
 
 SOURCES     = glwidget.cpp \
               graphics.cpp \
@@ -41,8 +43,10 @@ SOURCES     = glwidget.cpp \
               audiowidget.cpp \
               leapmux.cpp \
               musictheory.cpp \
-              instrumentmodule.cpp \
-              effectsmodule.cpp
+              effectsmodule.cpp \
+    mellotronmodule.cpp \
+    synthmodule.cpp \
+    instrumentmodule.cpp
 
 # install
 target.path = $$[QT_INSTALL_EXAMPLES]/opengl/2dpainting

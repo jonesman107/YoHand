@@ -4,7 +4,7 @@
 #include "leapmux.h"
 #include "leappd.h"
 #include "module.h"
-#include "instrumentmodule.h"
+#include "mellotronmodule.h"
 #include "effectsmodule.h"
 
 #define BPM 80
@@ -19,7 +19,7 @@ AudioWidget::AudioWidget(LeapMux *leap, Graphics *gfx,
   pd = new LeapPd("polysynth_and_effects.pd");
 
   modules.push_back(new EffectsModule(leap, pd, gfx, effect_r));
-  modules.push_back(new InstrumentModule(leap, pd, gfx, instr_l));
+  modules.push_back(new MellotronModule(leap, pd, gfx, instr_l));
 
   count = 0;
   this->gfx = gfx;

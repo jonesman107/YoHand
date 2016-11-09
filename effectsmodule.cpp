@@ -25,11 +25,11 @@ float clamp(float v, float min, float max)
 #define HIPASS_THRESH 0.6
 #define LOPASS_THRESH 0.4
 
-void EffectsModule::update(MetronomeState state)
+bool EffectsModule::update(MetronomeState state)
 {
   HandState hg = hand();
-  if (hg.x == 0 && hg.y == 0 && hg.z == 0) return;
-  if (hg.numExtended == 0) return;
+  if (hg.x == 0 && hg.y == 0 && hg.z == 0) return false;
+  if (hg.numExtended == 0) return false;
 
   float scale = clamp((hg.x - 0.4) * 4, 0, 1);
   if (hg.y > HIPASS_THRESH) {
@@ -71,4 +71,6 @@ void EffectsModule::update(MetronomeState state)
   pd->sendFloat("bs_liveness", 90);
   pd->sendFloat("bs_damping", 80);
   pd->sendFloat("bs_crossover", 2500);
+
+  return true;
 }
