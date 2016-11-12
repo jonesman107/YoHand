@@ -1,4 +1,4 @@
-#N canvas 945 192 926 553 10;
+#N canvas 393 292 926 553 10;
 #X obj 62 -839 inlet~;
 #X obj -92 -687 lowpass_filter;
 #X obj 62 -687 highpass_filter;
@@ -9,7 +9,7 @@
 #X obj 297 -613 env~;
 #X obj 231 -583 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
 #X obj 297 -584 - 100;
-#X obj 350 -684 no_filter;
+#X obj 345 -709 no_filter;
 #X obj -211 -807 t f f f f;
 #X obj 185 -678 bp_filter;
 #X obj -211 -860 + 1;

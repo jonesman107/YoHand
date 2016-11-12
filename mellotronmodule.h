@@ -14,10 +14,14 @@ class MellotronModule : public InstrumentModule
 {
  public:
   MellotronModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel);
-  bool update(MetronomeState state);
+  void update(MetronomeState state);
 
  private:
+  int prevRoot;
+  int prevTriad[3];
   void sendChordsIfNeeded(MetronomeState state);
+  void stopAllNotes();
+  void checkInstrumentChange();
 };
 
 #endif

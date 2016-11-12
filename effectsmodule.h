@@ -9,7 +9,7 @@ class EffectsModule : public Module
 {
  public:
   EffectsModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel);
-  bool update(MetronomeState state);
+  void update(MetronomeState state);
 
  private:
   Graphics *gfx;

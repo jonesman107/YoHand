@@ -543,17 +543,22 @@ void Graphics::paint(QPainter *painter, QPaintEvent *event, int elapsed)
 
   // paint root note UI element
   paintRootNote(painter, left_rect);
+  paintRootNote(painter, right_rect);
 
   // paint keyboard
-  QRect keyboard_rect = left_rect;
-  keyboard_rect.setWidth(left_rect.width() / 8);
-  paintNotes(painter, keyboard_rect);
+//  QRect keyboard_rect = left_rect;
+//  keyboard_rect.setWidth(left_rect.width() / 8);
+//  paintNotes(painter, keyboard_rect);
+
+//  QRect keyboard_rect = right_rect;
+//  keyboard_rect.setWidth(right_rect.width() / 8);
+//  paintNotes(painter, keyboard_rect);
 
   // paint left hand
   paintLeftHand(painter, left_rect);
 
   // draw HI/LO pass regions
-  paintLoHiPassRegions(painter, right_rect);
+//  paintLoHiPassRegions(painter, right_rect);
 
   // paint right hand
   paintRightHand(painter, left_rect);

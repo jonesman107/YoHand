@@ -45,25 +45,25 @@ Harmony::Harmony() {
     }
 
     // prints all computed notes and arpeggios
-//    for (int i = 0; i < 3; i++) {
-//        std::cout << key_names[i] << std::endl;
-//        for (int j = 0; j < ACCESSIBLE_NOTES_PER_KEY; j++) {
-//            std::cout << KEYMAP[i][j] << ", ";
-//            if (j > 0 && j % 7 == 6) {
-//                std::cout << std::endl;
-//            }
-//        }
+    //    for (int i = 0; i < 3; i++) {
+    //        std::cout << key_names[i] << std::endl;
+    //        for (int j = 0; j < ACCESSIBLE_NOTES_PER_KEY; j++) {
+    //            std::cout << KEYMAP[i][j] << ", ";
+    //            if (j > 0 && j % 7 == 6) {
+    //                std::cout << std::endl;
+    //            }
+    //        }
 
-//        std::cout << "Arpeggios" << std::endl;
-//        for (int j = 0; j < 7; j++) {
-//            std::cout << "from root " << key_names[j] << std::endl;
-//            for (int k = 0; k < RANGE * 3; k++) {
-//                std::cout << ARPEGGIOS[i][j][k] << ", ";
-//            }
-//            std::cout << std::endl;
-//        }
-//        std::cout << std::endl;
-//    }
+    //        std::cout << "Arpeggios" << std::endl;
+    //        for (int j = 0; j < 7; j++) {
+    //            std::cout << "from root " << key_names[j] << std::endl;
+    //            for (int k = 0; k < RANGE * 3; k++) {
+    //                std::cout << ARPEGGIOS[i][j][k] << ", ";
+    //            }
+    //            std::cout << std::endl;
+    //        }
+    //        std::cout << std::endl;
+    //    }
 }
 
 Harmony::~Harmony() {
@@ -114,31 +114,37 @@ int Harmony::getRootNote(float height) {
     return index;
 }
 
+int Harmony::getNoteInKeyAtHeight(float height) {
+    float preIndex = (float) NOTES_PER_KEY * height;
+    int note = (int) floor(preIndex);
+    return KEYMAP[key][note + BUFFER + 7];
+}
+
 // returns a sequence of length n
 void Harmony::getNoteSequence(int root, float mu, int *sequence, int seqLength) {
-  int *ARP = ARPEGGIOS[key][root % 7];
-  int arpLength = RANGE * 3;
-  int arpIndex = (int) round(1.0 * (root % 7) / (double) NOTES_PER_KEY * (double) arpLength);
-  arpIndex = fmax(0, fmin(arpLength - 1, arpIndex));
-  int x = (mu >= 0.0) ? 1 : -1;
-  for (int i = 0; i < seqLength; i++) {
-    sequence[i] = ARP[arpIndex] + NOTES_PER_OCTAVE;
+    int *ARP = ARPEGGIOS[key][root % 7];
+    int arpLength = RANGE * 3;
+    int arpIndex = (int) round(1.0 * (root % 7) / (double) NOTES_PER_KEY * (double) arpLength);
+    arpIndex = fmax(0, fmin(arpLength - 1, arpIndex));
+    int x = (mu >= 0.0) ? 1 : -1;
+    for (int i = 0; i < seqLength; i++) {
+        sequence[i] = ARP[arpIndex] + NOTES_PER_OCTAVE;
 
-    if (arpIndex == 0) {
-      x = 1;
-    } else if (arpIndex == arpLength - 1) {
-      x = -1;
+        if (arpIndex == 0) {
+            x = 1;
+        } else if (arpIndex == arpLength - 1) {
+            x = -1;
+        }
+        arpIndex = (arpIndex + x) % arpLength;
     }
-    arpIndex = (arpIndex + x) % arpLength;
-  }
 }
 
 static int indx[8][3] = {{0,1,2},{0,4,2},{0,1,5},{0,4,5},{3,1,2},{3,1,5},{3,4,2},{3,4,5}};
 static int combos[8][3];
-void Harmony::getTriad(int note, bool open, int triad[3], int prev[3]) {
+void Harmony::getTriad(int note, bool closed, int triad[3], int prev[3]) {
     int root, third, fifth;
 
-    if (open) {
+    if (closed) {
         triad[0] = root = KEYMAP[key][note];
         triad[1] = third = KEYMAP[key][note - 5];
         triad[2] = fifth = KEYMAP[key][note + 4];
@@ -146,6 +152,29 @@ void Harmony::getTriad(int note, bool open, int triad[3], int prev[3]) {
         triad[0] = root = KEYMAP[key][note];
         triad[1] = third = KEYMAP[key][note + 2];
         triad[2] = fifth = KEYMAP[key][note - 3];
+    }
+
+    if (RANGE != 2) {
+        int *ARP = ARPEGGIOS[key][note % 7];
+        int minDist = 99999, chosenIndex = 0;
+        for (int i = 0; i < 8; i++) {
+            double sum = 0;
+            for (int j = 0; j < 3; j++) {
+                int val = ARP[indx[i][j]];
+                combos[i][j] = val;
+                for (int k = 0; k < 3; k++) {
+                    int diff = std::abs(val - prev[i]) + std::abs(val - triad[i]);
+                    sum += diff;
+                }
+            }
+
+            if (sum < minDist) {
+                minDist = sum;
+            }
+        }
+        triad[0] = combos[chosenIndex][0];
+        triad[1] = combos[chosenIndex][1];
+        triad[2] = combos[chosenIndex][2];
     }
 }
 

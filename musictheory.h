@@ -30,7 +30,8 @@ class Harmony {
 
         std::string getKeyName(int key);
         int getRootNote(float height);
-        void getTriad(int note, bool spread, int triad[3], int prev[3]);
+        int getNoteInKeyAtHeight(float height);
+        void getTriad(int note, bool closed, int triad[3], int prev[3]);
         void getNoteSequence(int root, float mu, int *sequence, int length);
         void getAccentNotes(int currentRoot, int triad[3], int noteInSequence, int accentNotes[2]);
         void changeKeyIfScheduled(int changeKey);

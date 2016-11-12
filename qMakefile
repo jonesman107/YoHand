@@ -860,6 +860,7 @@ generated_files/audiowidget.o: audiowidget.cpp audiowidget.h \
 		module.h \
 		mellotronmodule.h \
 		instrumentmodule.h \
+		synthmodule.h \
 		effectsmodule.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/audiowidget.o audiowidget.cpp
 
@@ -932,7 +933,37 @@ generated_files/mellotronmodule.o: mellotronmodule.cpp mellotronmodule.h \
 		../5.7/clang_64/lib/QtGui.framework/Headers/qevent.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/mellotronmodule.o mellotronmodule.cpp
 
-generated_files/synthmodule.o: synthmodule.cpp 
+generated_files/synthmodule.o: synthmodule.cpp synthmodule.h \
+		instrumentmodule.h \
+		module.h \
+		leapmux.h \
+		leapcontroller.h \
+		leap/include/Leap.h \
+		leap/include/LeapMath.h \
+		leappd.h \
+		libpd/cpp/PdBase.hpp \
+		libpd/cpp/PdReceiver.hpp \
+		libpd/cpp/PdTypes.hpp \
+		libpd/cpp/PdMidiReceiver.hpp \
+		rtaudio.h \
+		metronome.h \
+		../5.7/clang_64/lib/QtCore.framework/Headers/QTimer \
+		../5.7/clang_64/lib/QtCore.framework/Headers/qtimer.h \
+		graphics.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QBrush \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qbrush.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QFont \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qfont.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QPen \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qpen.h \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../5.7/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		musictheory.h \
+		audiowidget.h \
+		../5.7/clang_64/lib/QtCore.framework/Headers/QObject \
+		../5.7/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../5.7/clang_64/lib/QtGui.framework/Headers/QKeyEvent \
+		../5.7/clang_64/lib/QtGui.framework/Headers/qevent.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o generated_files/synthmodule.o synthmodule.cpp
 
 generated_files/instrumentmodule.o: instrumentmodule.cpp instrumentmodule.h \

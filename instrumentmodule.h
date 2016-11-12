@@ -5,14 +5,27 @@
 #include "module.h"
 #include "graphics.h"
 #include "metronome.h"
+#include "musictheory.h"
+
+#define QUARTER_VELO 100
+#define EIGHTH_VELO 80
+#define SIXTEENTH_VELO 50
+#define CHORD_VELO 65
+#define SYNTH_CHANNEL_L 0
+#define MELLOTRON_CHANNEL_L 1
+#define SYNTH_CHANNEL_R 2
+#define MELLOTRON_CHANNEL_R 3
+#define NOTE_OFF 0
 
 class InstrumentModule : public Module
 {
+
 public:
+
+
     InstrumentModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel);
-    bool update(MetronomeState state);
+    void update(MetronomeState state);
     void changeInstrument(int instrumentNumber);
-    void sendEnvelope(int attack, int decay, float sustain, int release);
     void sendCompressor(int instrumentNumber);
     void incrementKey();
     void decrementKey();
@@ -20,28 +33,19 @@ public:
 
 protected:
     Graphics *gfx;
+    Harmony harmony;
+    int gestureVote = 0;
     int prevRoot;
-    int prevTriad[3];
-    int curSubdiv;
-    int curPos;
-    int chordChannel;
-
-    void sendNote(int channel, int note, int velocity, int *updateNote);
-    void stopAllNotes();
-
-private:
-    int sequence[16];
-    int melodyNote;
-    int chordChange[4];
-    int changeKey;
     int prevInstrument;
     int currentInstrument;
 
-    void checkInstrumentChange();
+    void sendNote(int channel, int note, int velocity, int *updateNote);
     bool checkStop();
-    void updateCurrentSubdivision();
-    void sendMelody(MetronomeState state);
-    void updateNotesIfNeeded(MetronomeState state);
+    void stopAllNotes();
+
+private:
+    int changeKey;
+
 
 };
 

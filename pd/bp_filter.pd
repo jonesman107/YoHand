@@ -9,7 +9,7 @@
 #X obj 84 -253 outlet~;
 #X obj 72 -326 bp~ 220 1;
 #X obj 150 -352 r band_width;
-#X floatatom 160 -313 5 0 0 0 - - -;
+#X floatatom 160 -313 5 0 0 0 - - -, f 5;
 #X connect 0 0 3 0;
 #X connect 0 0 8 0;
 #X connect 2 0 1 0;

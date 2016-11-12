@@ -17,8 +17,8 @@ class Module
  Module(LeapMux *mux, LeapPd *pd, int channel) :
   mux(mux), channel(channel), pd(pd)
   {};
-  virtual bool update(MetronomeState state) = 0;
-  virtual void rapidUpdate(int msPassed) { }
+  virtual void update(MetronomeState state) = 0;
+  virtual void rapidUpdate(int msPassed) { };
   virtual void changeInstrument(int instrumentNumber) { };
   virtual void incrementKey() { };
   virtual void decrementKey() { };
