@@ -72,7 +72,8 @@ public:
     void setMetronomeState(MetronomeState state);
 
     // control root note UI element
-    void sendRootNote(int root_note, int max);
+    void sendRootNoteLeft(int root_note, int max);
+    void sendRootNoteRight(int root_note);
     void sendKey(int new_key);
     void sendHarmony(Harmony *h);
 
@@ -116,13 +117,19 @@ private:
     int bpm = 80;
 
     // root note UI attributes
-    std::mutex root_note_mutex;
-    int root_note = 0;
+    std::mutex root_note_left_mutex;
+    int root_note_left = 0;
     int root_note_max = Harmony::NOTES_PER_KEY;
+
+    std::mutex root_note_right_mutex;
+    int root_note_right = 0;
+
     std::mutex key_mutex;
     int key = 0;
     // root note UI drawing method
-    void paintRootNote(QPainter *painter, QRect drawrect);
+    void paintRootNote(QPainter *painter, QRect drawrect, int root_note);
+    void paintRootNoteLeft(QPainter *painter, QRect drawrect);
+    void paintRootNoteRight(QPainter *painter, QRect drawrect);
 
     // accents UI attributes
     std::mutex accent_mutex;
@@ -132,7 +139,9 @@ private:
 
     // instrument select UI attributes
     std::mutex instru_mutex;
-    int selected_instrument_number = 0;
+    int selected_instrument_left = 0;
+    int selected_instrument_right = 3;
+
     // instrument select UI drawing method
     void paintInstrumentSelect(QPainter *painter, QRect drawrect);
 

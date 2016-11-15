@@ -53,15 +53,15 @@
 static QColor BACKGROUND_COLOR = Qt::black;
 
 Graphics::Graphics(LeapMux *leap, int instr_l, int instr_r, int effect_l, int effect_r) :
-  instr_l(instr_l), instr_r(instr_r), effect_l(effect_l), effect_r(effect_r)
+    instr_l(instr_l), instr_r(instr_r), effect_l(effect_l), effect_r(effect_r)
 {
-  this->leap = leap;
-  
-  circlePen = QPen(Qt::white);
-  circlePen.setWidth(3);
+    this->leap = leap;
 
-  textPen = QPen(Qt::white);
-  textFont.setPixelSize(16);
+    circlePen = QPen(Qt::white);
+    circlePen.setWidth(3);
+
+    textPen = QPen(Qt::white);
+    textFont.setPixelSize(16);
 }
 
 void Graphics::setNoteBounds(int min, int max) {
@@ -77,19 +77,25 @@ void Graphics::sendNote(char note, char velocity)
 }
 
 // control root note UI element
-void Graphics::sendRootNote(int note, int max) {
-  lock_guard<mutex> lock(root_note_mutex);
-  root_note = note;
-  root_note_max = max;
+void Graphics::sendRootNoteLeft(int note, int max) {
+    lock_guard<mutex> lock(root_note_left_mutex);
+    root_note_left = note;
+    root_note_max = max;
+}
+
+void Graphics::sendRootNoteRight(int note) {
+    lock_guard<mutex> lock(root_note_right_mutex);
+    std::cout << "send root note right: " << note << std::endl;
+    root_note_right = note;
 }
 
 void Graphics::sendHarmony(Harmony *new_harmony) {
-  harmony = new_harmony;
+    harmony = new_harmony;
 }
 
 void Graphics::sendKey(int new_key) {
-  lock_guard<mutex> lock(key_mutex);
-  key = new_key;
+    lock_guard<mutex> lock(key_mutex);
+    key = new_key;
 }
 
 void Graphics::setSynth(float a, float d, float s, float r)
@@ -124,23 +130,26 @@ void Graphics::setRelease(float r)
 
 void Graphics::setMetronomeState(MetronomeState state)
 {
-  lock_guard<mutex> lock(metronome_mutex);
-  metronome_state = state;
+    lock_guard<mutex> lock(metronome_mutex);
+    metronome_state = state;
 }
 
 void Graphics::sendInstrumentNumber(int instrument_number) {
-  lock_guard<mutex> lock(instru_mutex);
-  selected_instrument_number = instrument_number;
+    lock_guard<mutex> lock(instru_mutex);
+    if (instrument_number < 2)
+        selected_instrument_left = instrument_number;
+    else
+        selected_instrument_right = instrument_number;
 }
 
 void Graphics::sendAccents(std::vector<bool> a) {
-  lock_guard<mutex> lock(accent_mutex);
-  accents = a;
+    lock_guard<mutex> lock(accent_mutex);
+    accents = a;
 }
 
 void Graphics::sendBPM(int b) {
-  lock_guard<mutex> lock(bpm_mutex);
-  bpm = b;
+    lock_guard<mutex> lock(bpm_mutex);
+    bpm = b;
 }
 
 void Graphics::paintNotes(QPainter *painter, QRect drawrect)
@@ -241,10 +250,10 @@ void Graphics::paintGesture(QPainter *painter, HandState h, QRect drawrect)
     vector<float *> sorted;
     // hardcoded 5 fingers
     for (int i = 0; i < 5; i++) {
-      sorted.push_back(h.fpos[i]);
+        sorted.push_back(h.fpos[i]);
     }
     sort (sorted.begin(), sorted.end(), [](float *a, float * b) {
-      return a[2] > b[2];
+        return a[2] > b[2];
     });
     for (float *fgr : sorted) paintFinger (painter, fgr, drawrect);
     // */
@@ -278,105 +287,106 @@ void Graphics::paintHand(QPainter *painter, HandState h, QRect drawrect)
 
 void Graphics::paintMetronome(QPainter *painter, MetronomeState st, QRect drawrect)
 {
-  lock_guard<mutex> lock(metronome_mutex);
-  painter->setClipRegion(drawrect);
-  painter->setClipping(true);
+    lock_guard<mutex> lock(metronome_mutex);
+    painter->setClipRegion(drawrect);
+    painter->setClipping(true);
 
-  painter->setPen(Qt::black);
+    painter->setPen(Qt::black);
 
-  painter->setBrush(Qt::blue);
-  painter->drawChord(drawrect.x(), drawrect.y() + drawrect.height() / 2,
-		     100, 100, 2 * 360 * st.sixteenthTripletNum / 3, 180 * 16);
-  painter->setBrush(Qt::green);
-  painter->drawChord(drawrect.x(), drawrect.y() + drawrect.height() / 2,
-		     100, 100, 2 * 360 * st.sixteenthTripletNum / 3 + 180 * 16, 180 * 16);
+    painter->setBrush(Qt::blue);
+    painter->drawChord(drawrect.x(), drawrect.y() + drawrect.height() / 2,
+                       100, 100, 2 * 360 * st.sixteenthTripletNum / 3, 180 * 16);
+    painter->setBrush(Qt::green);
+    painter->drawChord(drawrect.x(), drawrect.y() + drawrect.height() / 2,
+                       100, 100, 2 * 360 * st.sixteenthTripletNum / 3 + 180 * 16, 180 * 16);
 
-  painter->setBrush(Qt::white);
-  if (!st.sixteenthNum)
-    painter->drawEllipse(drawrect.x(), drawrect.y() + drawrect.height() / 2, 100, 100);
-  else
-    painter->drawEllipse(drawrect.x() + 40, drawrect.y() + drawrect.height() / 2 + 40, 20, 20);
-  
-  painter->setClipping(false);
+    painter->setBrush(Qt::white);
+    if (!st.sixteenthNum)
+        painter->drawEllipse(drawrect.x(), drawrect.y() + drawrect.height() / 2, 100, 100);
+    else
+        painter->drawEllipse(drawrect.x() + 40, drawrect.y() + drawrect.height() / 2 + 40, 20, 20);
+
+    painter->setClipping(false);
 }
 
 // current key indicator drawing method
 void Graphics::paintKeyIndicator(QPainter *painter, QRect dst) {
-  lock_guard<mutex> lock(key_mutex);
-  painter->setPen(textPen);
-  painter->setFont(textFont);
-  char buffer[30];
-  sprintf(buffer, "Key: %s ", harmony->getKeyName(key).c_str());
-  painter->drawText(dst, Qt::AlignRight | Qt::AlignTop, QString(buffer));
+    lock_guard<mutex> lock(key_mutex);
+    painter->setPen(textPen);
+    painter->setFont(textFont);
+    char buffer[30];
+    sprintf(buffer, "Key: %s ", harmony->getKeyName(key).c_str());
+    painter->drawText(dst, Qt::AlignRight | Qt::AlignTop, QString(buffer));
 }
 
 // LO/HI pass region drawing method
 void Graphics::paintLoHiPassRegions(QPainter *painter, QRect dst) {
-  // hi
-  QRect hi = dst;
-  hi.setHeight(dst.height() * 0.4);
-  // lo
-  QRect lo = hi;
-  lo.translate(0, dst.height() * 0.6);
-  // paint hi
-  QLinearGradient hi_gradient(hi.topLeft(), hi.bottomLeft());
-  hi_gradient.setColorAt(0, QColor(197, 202, 233));
-  hi_gradient.setColorAt(1, Qt::black);
-  painter->fillRect(hi, hi_gradient);
-  // paint lo
-  QLinearGradient lo_gradient(lo.topLeft(), lo.bottomLeft());
-  lo_gradient.setColorAt(0, Qt::black);
-  lo_gradient.setColorAt(1, QColor(24, 32, 120));
-  painter->fillRect(lo, lo_gradient);
+    // hi
+    QRect hi = dst;
+    hi.setHeight(dst.height() * 0.4);
+    // lo
+    QRect lo = hi;
+    lo.translate(0, dst.height() * 0.6);
+    // paint hi
+    QLinearGradient hi_gradient(hi.topLeft(), hi.bottomLeft());
+    hi_gradient.setColorAt(0, QColor(197, 202, 233));
+    hi_gradient.setColorAt(1, Qt::black);
+    painter->fillRect(hi, hi_gradient);
+    // paint lo
+    QLinearGradient lo_gradient(lo.topLeft(), lo.bottomLeft());
+    lo_gradient.setColorAt(0, Qt::black);
+    lo_gradient.setColorAt(1, QColor(24, 32, 120));
+    painter->fillRect(lo, lo_gradient);
 }
 
 // instrument select drawing method
 static QColor ISEL_SELECTED = QColor(92, 107, 192);
 static QColor ISEL_NOT_SELECTED = QColor(26, 35, 126);
 static int ISEL_PAD = 3;
-static int NUM_INSTRUMENTS = 12;
+static int NUM_INSTRUMENTS = 4;
 
-static char* ISEL_NAMES[] = {"Flute", "M300A", "M300B", "Violin", "Brass", "Cello", "Strings", "Choir", "Wood-\nwind", "GC3\nBrass", "Square\nWave", "Sine\nWave"};
+//static char* ISEL_NAMES[] = {"Flute", "M300A", "M300B", "Violin", "Brass", "Cello", "Strings", "Choir", "Wood-\nwind", "GC3\nBrass", "Square\nWave", "Sine\nWave"};
+static char* ISEL_NAMES[] = {"LH Saw", "LH Sine", "RH Saw", "RH Sine"};
 
 void Graphics::paintInstrumentSelect(QPainter *painter, QRect dst) {
-  lock_guard<mutex> lock(instru_mutex);
-  for (int i = 0; i < NUM_INSTRUMENTS; i++) {
-    int pos = (int) ((float) i * (float) dst.width() / (float) NUM_INSTRUMENTS);
-    int width = (int) ((float) (i + 1) * (float) dst.width() / (float) NUM_INSTRUMENTS) - pos;
-    if (i == 0) {
-      pos += ISEL_PAD;
-      width -= ISEL_PAD;
+    lock_guard<mutex> lock(instru_mutex);
+    for (int i = 0; i < NUM_INSTRUMENTS; i++) {
+        int pos = (int) ((float) i * (float) dst.width() / (float) NUM_INSTRUMENTS);
+        int width = (int) ((float) (i + 1) * (float) dst.width() / (float) NUM_INSTRUMENTS) - pos;
+        if (i == 0) {
+            pos += ISEL_PAD;
+            width -= ISEL_PAD;
+        }
+        // draw selector
+        QRect selectorRect = QRect(dst.x() + pos, dst.y(), width - ISEL_PAD, dst.height() - ISEL_PAD);
+        QColor color = (selected_instrument_left == i || selected_instrument_right == i) ? ISEL_SELECTED : ISEL_NOT_SELECTED;
+        painter->fillRect(selectorRect, color);
+        // draw text
+        painter->setPen(textPen);
+        painter->setFont(textFont);
+        // draw selector number
+        selectorRect.setHeight(selectorRect.height() / 2);
+        QString keyString;
+        if (0 <= i && i <= 8) {
+            keyString = QString::number(i + 1);
+        } else {
+            switch (i) {
+            case 9:
+                keyString = QStringLiteral("0");
+                break;
+            case 10:
+                keyString = QStringLiteral("-");
+                break;
+            default: // case 11:
+                keyString = QStringLiteral("=");
+                break;
+            }
+        }
+        painter->drawText(selectorRect, Qt::AlignCenter, keyString);
+        // draw selector name
+        selectorRect.translate(0, selectorRect.height());
+        painter->drawText(selectorRect, Qt::AlignCenter, QString(ISEL_NAMES[i]));
     }
-    // draw selector
-    QRect selectorRect = QRect(dst.x() + pos, dst.y(), width - ISEL_PAD, dst.height() - ISEL_PAD);
-    QColor color = (selected_instrument_number == i) ? ISEL_SELECTED : ISEL_NOT_SELECTED;
-    painter->fillRect(selectorRect, color);
-    // draw text
-    painter->setPen(textPen);
-    painter->setFont(textFont);
-    // draw selector number
-    selectorRect.setHeight(selectorRect.height() / 2);
-    QString keyString;
-    if (0 <= i && i <= 8) {
-      keyString = QString::number(i + 1);
-    } else {
-      switch (i) {
-      case 9:
-        keyString = QStringLiteral("0");
-        break;
-      case 10:
-        keyString = QStringLiteral("-");
-        break;
-      default: // case 11:
-        keyString = QStringLiteral("=");
-        break;
-      }
-    }
-    painter->drawText(selectorRect, Qt::AlignCenter, keyString);
-    // draw selector name
-    selectorRect.translate(0, selectorRect.height());
-    painter->drawText(selectorRect, Qt::AlignCenter, QString(ISEL_NAMES[i]));
-  }
 }
 
 // root note drawing method
@@ -387,22 +397,31 @@ static QColor ROOT_MAJOR = QColor(50, 50, 80);
 static QColor ROOT_DEFAULT = QColor(50, 50, 50);
 static int ROOT_PADDING = 3;
 
-void Graphics::paintRootNote(QPainter *painter, QRect dst) {
-  lock_guard<mutex> lock(root_note_mutex);
-  // root notes
-  for (int i = 0; i < root_note_max; i++) {
-    int y = dst.y() + dst.height() - i * dst.height() / root_note_max;
-    int height = dst.height() / root_note_max - ROOT_PADDING;
-    QColor color = ROOT_DEFAULT;
-    if (harmony) {
-        int root_idx = (7 + i - harmony->root_note_index[key]) % 7;
-        if (root_idx == 0) color = ROOT_KEY;
-        else if (root_idx == 6) color = ROOT_INVALID;
-        else if (!harmony->is_minor[root_idx]) color = ROOT_MAJOR;
+void Graphics::paintRootNoteLeft(QPainter *painter, QRect dst) {
+    lock_guard<mutex> lock(root_note_left_mutex);
+    paintRootNote(painter, dst, root_note_left);
+}
+
+void Graphics::paintRootNoteRight(QPainter *painter, QRect dst) {
+    lock_guard<mutex> lock(root_note_right_mutex);
+    paintRootNote(painter, dst, root_note_right);
+}
+
+void Graphics::paintRootNote(QPainter *painter, QRect dst, int root_note) {
+    // root notes
+    for (int i = 0; i < root_note_max; i++) {
+        int y = dst.y() + dst.height() - i * dst.height() / root_note_max;
+        int height = dst.height() / root_note_max - ROOT_PADDING;
+        QColor color = ROOT_DEFAULT;
+        if (harmony) {
+            int root_idx = (7 + i - harmony->root_note_index[key]) % 7;
+            if (root_idx == 0) color = ROOT_KEY;
+            else if (root_idx == 6) color = ROOT_INVALID;
+            else if (!harmony->is_minor[root_idx]) color = ROOT_MAJOR;
+        }
+        if (i == root_note) color = color.lighter(300);
+        painter->fillRect(QRect(dst.x(), y - height, dst.width(), height), color);
     }
-    if (i == root_note) color = color.lighter(300);
-    painter->fillRect(QRect(dst.x(), y - height, dst.width(), height), color);
-  }
 }
 
 // accents UI element drawing method
@@ -413,92 +432,92 @@ static int METRONOME_PTR_WIDTH = 30;
 static int METRONOME_PTR_HEIGHT = 40;
 
 void Graphics::paintAccents(QPainter *painter, QRect dst) {
-  lock_guard<mutex> lock(accent_mutex);
-  // draw accents
-  int i = 0;
-  int len = accents.size();
-  for (auto it = accents.begin(); it != accents.end(); it++) {
-    // only check every third boolean in accents vector
-    if (i % 3 == 0 && *it) {
-      int pos = (int) ((float) i / (float) len * (float) dst.width());
-      int width = (int) ((float) (i + 3) / (float) len * (float) dst.width()) - pos;
-      if (i == 0) {
-        pos += ACCENT_PADDING;
-        width -= ACCENT_PADDING;
-      }
-      QRect rect = QRect(dst.x() + pos, dst.y() + ACCENT_PADDING, width - ACCENT_PADDING, dst.height() - 2*ACCENT_PADDING);
-      painter->fillRect(rect, ACCENT);
+    lock_guard<mutex> lock(accent_mutex);
+    // draw accents
+    int i = 0;
+    int len = accents.size();
+    for (auto it = accents.begin(); it != accents.end(); it++) {
+        // only check every third boolean in accents vector
+        if (i % 3 == 0 && *it) {
+            int pos = (int) ((float) i / (float) len * (float) dst.width());
+            int width = (int) ((float) (i + 3) / (float) len * (float) dst.width()) - pos;
+            if (i == 0) {
+                pos += ACCENT_PADDING;
+                width -= ACCENT_PADDING;
+            }
+            QRect rect = QRect(dst.x() + pos, dst.y() + ACCENT_PADDING, width - ACCENT_PADDING, dst.height() - 2*ACCENT_PADDING);
+            painter->fillRect(rect, ACCENT);
+        }
+        i++;
     }
-    i++;
-  }
-  // draw metronome pointer
-  float time = (float) metronome_state.sixteenthTripletNum / 47.0 ;
-  int ptrX = dst.x() + time * dst.width();
-  int ptrY = dst.y();
-  QPointF ptrPoints[3] = {
-    QPointF(ptrX - METRONOME_PTR_WIDTH / 2, ptrY),
-    QPointF(ptrX + METRONOME_PTR_WIDTH / 2, ptrY),
-    QPointF(ptrX, ptrY + METRONOME_PTR_HEIGHT)
-  };
-  painter->setBrush(METRONOME_PTR);
-  painter->setPen(Qt::NoPen);
-  painter->drawConvexPolygon(ptrPoints, 3);
+    // draw metronome pointer
+    float time = (float) metronome_state.sixteenthTripletNum / 47.0 ;
+    int ptrX = dst.x() + time * dst.width();
+    int ptrY = dst.y();
+    QPointF ptrPoints[3] = {
+        QPointF(ptrX - METRONOME_PTR_WIDTH / 2, ptrY),
+        QPointF(ptrX + METRONOME_PTR_WIDTH / 2, ptrY),
+        QPointF(ptrX, ptrY + METRONOME_PTR_HEIGHT)
+    };
+    painter->setBrush(METRONOME_PTR);
+    painter->setPen(Qt::NoPen);
+    painter->drawConvexPolygon(ptrPoints, 3);
 }
 
 void Graphics::paintLeftHand(QPainter *painter, QRect dst) {
-  painter->setPen(circlePen);
-  painter->save();
-  if (leap->isFrozen(effect_l)) {
-    painter->setBrush(QColor(128, 128, 128));
-    paintHand (painter, leap->currentGesture(effect_l), dst);
-    auto pen = painter->pen();
-    pen.setColor(Qt::black);
-    painter->setPen(pen);
-  }
-  painter->setBrush(QColor(0, 128, 0));
-  paintHand (painter, leap->currentGesture(effect_l, true), dst);
-  painter->restore();
+    painter->setPen(circlePen);
+    painter->save();
+    if (leap->isFrozen(effect_l)) {
+        painter->setBrush(QColor(128, 128, 128));
+        paintHand (painter, leap->currentGesture(effect_l), dst);
+        auto pen = painter->pen();
+        pen.setColor(Qt::black);
+        painter->setPen(pen);
+    }
+    painter->setBrush(QColor(0, 128, 0));
+    paintHand (painter, leap->currentGesture(effect_l, true), dst);
+    painter->restore();
 }
 
 void Graphics::paintRightHand(QPainter *painter, QRect dst) {
-  painter->setPen(circlePen);
-  painter->save();
-  painter->translate(dst.width(), 0);
-  if (leap->isFrozen(instr_r)) {
-    painter->setBrush(QColor(128, 128, 128));
-    paintHand (painter, leap->currentGesture(instr_r), dst);
-    auto pen = painter->pen();
-    pen.setColor(Qt::black);
-    painter->setPen(pen);
-  }
-  painter->setBrush(QColor(128, 0, 0));
-  paintHand (painter, leap->currentGesture(instr_r, true), dst);
-  painter->restore();
+    painter->setPen(circlePen);
+    painter->save();
+    painter->translate(dst.width(), 0);
+    if (leap->isFrozen(instr_r)) {
+        painter->setBrush(QColor(128, 128, 128));
+        paintHand (painter, leap->currentGesture(instr_r), dst);
+        auto pen = painter->pen();
+        pen.setColor(Qt::black);
+        painter->setPen(pen);
+    }
+    painter->setBrush(QColor(128, 0, 0));
+    paintHand (painter, leap->currentGesture(instr_r, true), dst);
+    painter->restore();
 }
 
 // paint the little box with key & BPM info
 void Graphics::paintKeyAndBpm(QPainter *painter, QRect dst) {
-  lock_guard<mutex> keyLock(key_mutex);
-  lock_guard<mutex> bpmLock(bpm_mutex);
-  // paint border
-  painter->fillRect(QRect(dst.x() - 2, dst.y() - 2, dst.width() + 4, dst.height() + 4), Qt::white);
-  // paint background
-  painter->fillRect(dst, BACKGROUND_COLOR);
-  // paint text
-  painter->setPen(textPen);
-  painter->setFont(textFont);
-  char buffer[30];
-  // paint key on left side
-  QRect left_rect = dst;
-  left_rect.setWidth(dst.width() / 2);
-  sprintf(buffer, "Key\n%s", harmony->getKeyName(key).c_str());
-  painter->drawText(left_rect, Qt::AlignCenter, QString(buffer));
-  // paint BPM on right side
-  QRect right_rect = dst;
-  right_rect.setWidth(dst.width() - left_rect.width());
-  right_rect.translate(left_rect.width(), 0);
-  sprintf(buffer, "BPM\n%d", bpm); // TODO
-  painter->drawText(right_rect, Qt::AlignCenter, QString(buffer));
+    lock_guard<mutex> keyLock(key_mutex);
+    lock_guard<mutex> bpmLock(bpm_mutex);
+    // paint border
+    painter->fillRect(QRect(dst.x() - 2, dst.y() - 2, dst.width() + 4, dst.height() + 4), Qt::white);
+    // paint background
+    painter->fillRect(dst, BACKGROUND_COLOR);
+    // paint text
+    painter->setPen(textPen);
+    painter->setFont(textFont);
+    char buffer[30];
+    // paint key on left side
+    QRect left_rect = dst;
+    left_rect.setWidth(dst.width() / 2);
+    sprintf(buffer, "Key\n%s", harmony->getKeyName(key).c_str());
+    painter->drawText(left_rect, Qt::AlignCenter, QString(buffer));
+    // paint BPM on right side
+    QRect right_rect = dst;
+    right_rect.setWidth(dst.width() - left_rect.width());
+    right_rect.translate(left_rect.width(), 0);
+    sprintf(buffer, "BPM\n%d", bpm); // TODO
+    painter->drawText(right_rect, Qt::AlignCenter, QString(buffer));
 }
 
 static int INSTRU_SELECT_HEIGHT = 75;
@@ -508,69 +527,69 @@ static int KEY_AND_BPM_HEIGHT = 50;
 
 void Graphics::paint(QPainter *painter, QPaintEvent *event, int elapsed)
 {
-  // get the size of the window
-  QRect window_rect = event->rect();
+    // get the size of the window
+    QRect window_rect = event->rect();
 
-  // fill window with background
-  painter->fillRect(window_rect, BACKGROUND_COLOR);
+    // fill window with background
+    painter->fillRect(window_rect, BACKGROUND_COLOR);
 
-  // instrument selector rectangle
-  QRect instru_select_rect = window_rect;
-  instru_select_rect.setHeight(INSTRU_SELECT_HEIGHT);
-  instru_select_rect.translate(0, window_rect.height() - instru_select_rect.height());
+    // instrument selector rectangle
+    QRect instru_select_rect = window_rect;
+    instru_select_rect.setHeight(INSTRU_SELECT_HEIGHT);
+    instru_select_rect.translate(0, window_rect.height() - instru_select_rect.height());
 
-  // accents rectangle
-  QRect accents_rect = window_rect;
-  accents_rect.setHeight(ACCENTS_HEIGHT);
-  accents_rect.translate(0, window_rect.height() - instru_select_rect.height() - accents_rect.height());
+    // accents rectangle
+    QRect accents_rect = window_rect;
+    accents_rect.setHeight(ACCENTS_HEIGHT);
+    accents_rect.translate(0, window_rect.height() - instru_select_rect.height() - accents_rect.height());
 
-  // left side
-  QRect left_rect = window_rect;
-  left_rect.setWidth(window_rect.width() / 2);
-  left_rect.setHeight(window_rect.height() - instru_select_rect.height() - accents_rect.height());
+    // left side
+    QRect left_rect = window_rect;
+    left_rect.setWidth(window_rect.width() / 2);
+    left_rect.setHeight(window_rect.height() - instru_select_rect.height() - accents_rect.height());
 
-  // right side
-  QRect right_rect = window_rect;
-  right_rect.setWidth(window_rect.width() - left_rect.width());
-  right_rect.setHeight(window_rect.height() - instru_select_rect.height() - accents_rect.height());
-  right_rect.translate(left_rect.width(), 0);
+    // right side
+    QRect right_rect = window_rect;
+    right_rect.setWidth(window_rect.width() - left_rect.width());
+    right_rect.setHeight(window_rect.height() - instru_select_rect.height() - accents_rect.height());
+    right_rect.translate(left_rect.width(), 0);
 
-  // paint instrument select UI element
-  paintInstrumentSelect(painter, instru_select_rect);
+    // paint instrument select UI element
+    paintInstrumentSelect(painter, instru_select_rect);
 
-  // paint accents UI element
-  paintAccents(painter, accents_rect);
+    // paint accents UI element
+    paintAccents(painter, accents_rect);
 
-  // paint root note UI element
-  paintRootNote(painter, left_rect);
-  paintRootNote(painter, right_rect);
+    // paint root note UI element
+    paintRootNoteLeft(painter, left_rect);
+    paintRootNoteRight(painter, right_rect);
 
-  // paint keyboard
-//  QRect keyboard_rect = left_rect;
-//  keyboard_rect.setWidth(left_rect.width() / 8);
-//  paintNotes(painter, keyboard_rect);
+    // paint keyboard
+    //  QRect keyboard_rect = left_rect;
+    //  keyboard_rect.setWidth(left_rect.width() / 8);
+    //  paintNotes(painter, keyboard_rect);
 
-//  QRect keyboard_rect = right_rect;
-//  keyboard_rect.setWidth(right_rect.width() / 8);
-//  paintNotes(painter, keyboard_rect);
+    //  QRect keyboard_rect = right_rect;
+    //  keyboard_rect.setWidth(right_rect.width() / 8);
+    //  paintNotes(painter, keyboard_rect);
 
-  // paint left hand
-  paintLeftHand(painter, left_rect);
+    // paint left hand
+    paintLeftHand(painter, left_rect);
 
-  // draw HI/LO pass regions
-//  paintLoHiPassRegions(painter, right_rect);
+    // draw HI/LO pass regions
+    //  paintLoHiPassRegions(painter, right_rect);
 
-  // paint right hand
-  paintRightHand(painter, left_rect);
+    // paint right hand
+    paintRightHand(painter, left_rect);
 
-  // paint divider
-  painter->setPen(Qt::black);
-  painter->drawLine(right_rect.x(), right_rect.y(), right_rect.x(), right_rect.height());
+    // paint divider
+    painter->setPen(Qt::black);
+    painter->drawLine(right_rect.x(), right_rect.y(), right_rect.x(), right_rect.height());
 
-  // paint key and BPM
-  QRect key_bpm_rect = QRect(window_rect.x() + window_rect.width() / 2 - KEY_AND_BPM_WIDTH / 2,
-                             window_rect.y(),
-                             KEY_AND_BPM_WIDTH,
-                             KEY_AND_BPM_HEIGHT);
-  paintKeyAndBpm(painter, key_bpm_rect);
+    // paint key and BPM
+    QRect key_bpm_rect = QRect(window_rect.x() + window_rect.width() / 2 - KEY_AND_BPM_WIDTH / 2,
+                               window_rect.y(),
+                               KEY_AND_BPM_WIDTH,
+                               KEY_AND_BPM_HEIGHT);
+    paintKeyAndBpm(painter, key_bpm_rect);
 }

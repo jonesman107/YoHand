@@ -50,25 +50,29 @@ void AudioWidget::setBPM(int bpm)
 void AudioWidget::keyPressEvent(QKeyEvent *keyEvent) {
     int keyCode = keyEvent->key();
     // if keyboard key is 0-9 on the top row
-    if ((Qt::Key_1 <= keyCode && keyCode <= Qt::Key_9) ||
-            keyCode == Qt::Key_0 ||
-            keyCode == Qt::Key_Minus ||
-            keyCode == Qt::Key_Equal) {
+    if ((Qt::Key_1 <= keyCode && keyCode <= Qt::Key_4)) { // ||
+//            keyCode == Qt::Key_0 ||
+//            keyCode == Qt::Key_Minus ||
+//            keyCode == Qt::Key_Equal) {
         int instrumentNumber, i;
-        if (Qt::Key_1 <= keyCode && keyCode <= Qt::Key_9) {
-            i = 0;
-            instrumentNumber = keyCode - Qt::Key_1;
-        } else if (keyCode == Qt::Key_0) {
-            i = 0;
-            instrumentNumber = 9;
-        } else if (keyCode == Qt::Key_Minus) {
-            i = 1;
-            instrumentNumber = 10;
-        } else if (keyCode == Qt::Key_Equal) {
-            i = 1;
-            instrumentNumber = 11;
-        }
-        modules.at(i)->changeInstrument(instrumentNumber);
+//        if (Qt::Key_1 <= keyCode && keyCode <= Qt::Key_9) {
+//            i = 0;
+//            instrumentNumber = keyCode - Qt::Key_1;
+//        } else if (keyCode == Qt::Key_0) {
+//            i = 0;
+//            instrumentNumber = 9;
+//        } else if (keyCode == Qt::Key_Minus) {
+//            i = 1;
+//            instrumentNumber = 10;
+//        } else if (keyCode == Qt::Key_Equal) {
+//            i = 1;
+//            instrumentNumber = 11;
+//        }
+        instrumentNumber = keyCode - Qt::Key_1;
+        if (instrumentNumber < 2)
+            modules.at(0)->changeInstrument(instrumentNumber);
+        else
+            modules.at(1)->changeInstrument(instrumentNumber);
         // send instrument change to all modules
 //        for (auto module : modules) {
 //            module->changeInstrument(instrumentNumber);

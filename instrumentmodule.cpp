@@ -47,13 +47,7 @@ bool InstrumentModule::checkStop() {
 }
 
 void InstrumentModule::sendCompressor(int instrumentNumber) {
-    if (instrumentNumber == 10)
-        pd->sendFloat("$0-gain", -2);
-    else if (instrumentNumber == 11)
-        pd->sendFloat("$0-gain", 10);
-    else
-        pd->sendFloat("$0-gain", 10);
-
+    pd->sendFloat("$0-gain", 10);
     pd->sendFloat("$0-response", 40);
     pd->sendFloat("$0-thresh", -2);
     pd->sendFloat("$0-ratio", 50);

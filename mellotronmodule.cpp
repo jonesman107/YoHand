@@ -24,7 +24,7 @@ MellotronModule::MellotronModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int ch
 
 void MellotronModule::update(MetronomeState state)
 {
-    checkInstrumentChange();
+//    checkInstrumentChange();
 
     if (InstrumentModule::checkStop()) {
         stopAllNotes();
@@ -36,11 +36,12 @@ void MellotronModule::update(MetronomeState state)
 
 void MellotronModule::checkInstrumentChange() {
     if (prevInstrument == currentInstrument) return;
-//    if (0 <= currentInstrument && currentInstrument <= 9)
-//        pd->sendFloat("bs_instru_type", currentInstrument);
+    if (currentInstrument > 1) {
+        prevInstrument = currentInstrument;
+        return;
+    }
 
-    pd->sendFloat("bs_wave_shape", 1);
-
+    pd->sendFloat("bs_wave_shape_left", currentInstrument % 2);
     stopAllNotes();
     prevInstrument = currentInstrument;
 }
@@ -60,7 +61,8 @@ void MellotronModule::sendChordsIfNeeded(MetronomeState state)
         sendNote(SYNTH_CHANNEL_L, triad[1], CHORD_VELO, &prevTriad[1]);
         sendNote(SYNTH_CHANNEL_L, triad[2], CHORD_VELO, &prevTriad[2]);
         // update the root note UI element
-        gfx->sendRootNote(currentRoot - harmony.BUFFER, harmony.NOTES_PER_KEY);
+//        gfx->sendRootNoteLeft(currentRoot - harmony.BUFFER, harmony.NOTES_PER_KEY);
+        gfx->sendRootNoteRight(5);
         prevRoot = currentRoot;
         delete[] triad;
     }

@@ -26,7 +26,7 @@ SynthModule::SynthModule(LeapMux *mux, LeapPd *pd, Graphics *gfx, int channel) :
 
 void SynthModule::update(MetronomeState state)
 {
-    checkInstrumentChange();
+//    checkInstrumentChange();
 
     if (checkStop()) {
         stopAllNotes();
@@ -44,6 +44,12 @@ void SynthModule::sendMelody(MetronomeState state) {
     if (currentMelodyNote != melodyNote) {
         stopAllNotes();
         sendNote(SYNTH_CHANNEL_R, currentMelodyNote, EIGHTH_VELO, &melodyNote);
+        int gfxNote = harmony.getRootNote(h.y) - harmony.BUFFER;
+        std::cout << "current melody note: " << gfxNote << std::endl;
+        // TODO this fails for some reason
+//        gfx->sendRootNoteRight(gfxNote);
+        melodyNote = currentMelodyNote;
+
 //        sendNote(SYNTH_CHANNEL_R, currentMelodyNote - 12, EIGHTH_VELO, NULL);
     }
 
@@ -110,22 +116,23 @@ void SynthModule::sendEnvelope(int attack, int decay, float sustain, int release
     pd->sendFloat("bs_s", sustain);
     pd->sendFloat("bs_r", release);
 
-    pd->sendFloat("bs_voice_filt_on", 1);
-    pd->sendFloat("bs_start", 8500);
-    pd->sendFloat("bs_end", 300);
-    pd->sendFloat("bs_time", 6000);
-    pd->sendFloat("bs_q", 5);
+//    pd->sendFloat("bs_voice_filt_on", 1);
+//    pd->sendFloat("bs_start", 8500);
+//    pd->sendFloat("bs_end", 300);
+//    pd->sendFloat("bs_time", 6000);
+//    pd->sendFloat("bs_q", 5);
 }
 
 void SynthModule::checkInstrumentChange() {
     if (prevInstrument == currentInstrument) return;
-//    if (currentInstrument > 9)
-//        pd->sendFloat("bs_wave_shape", currentInstrument % 10);
+    if (currentInstrument <= 1) {
+        prevInstrument = currentInstrument;
+        return;
+    }
 
-    pd->sendFloat("bs_wave_shape_r", 0);
-
-    sendCompressor(currentInstrument);
-    sendEnvelope(100, 1000, 1, 100);
+    pd->sendFloat("bs_wave_shape_right", currentInstrument % 2);
+//    sendCompressor(currentInstrument);
+//    sendEnvelope(100, 1000, 1, 100);
     stopAllNotes();
     prevInstrument = currentInstrument;
 }
